@@ -19,19 +19,24 @@ st.caption("Construction Claims – Summary • Entitlement • Quantum • Sche
 with st.sidebar:
     st.header("Settings")
     
-    # Try to get key from Streamlit secrets first, then environment variable
-    default_key = ""
+    # Try to load the key from Streamlit Secrets
+    secret_key = None
     try:
-        default_key = st.secrets["GROQ_API_KEY"]
-    except:
-        default_key = os.getenv("GROQ_API_KEY", "")
+        secret_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        secret_key = None
     
-    groq_key = st.text_input(
-        "Groq API Key",
-        type="password",
-        value=default_key,
-        help="Leave blank if using Streamlit Secrets"
-    )
+    if secret_key:
+        # Secret exists – use it and hide the input box
+        groq_key = secret_key
+        st.success("API key loaded from Secrets")
+    else:
+        # No secret found – show the input box
+        groq_key = st.text_input(
+            "Groq API Key",
+            type="password",
+            help="Enter your Groq API key"
+        )
 
 # Project Context
 st.subheader("1. Project Context")
